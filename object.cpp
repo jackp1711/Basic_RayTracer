@@ -29,7 +29,8 @@ float u, v , w;
 */
 void Object::intersection(Ray r, Hit &h)
 {
-  float epsilon = 0.000001f;
+  float epsilon = 0.00000001f;
+
   for(int i = 0; i < mesh->triangle_count; i++)
   {
     Vertex p0 = mesh->vertex[mesh->triangle[i][0]];
@@ -77,7 +78,6 @@ void Object::intersection(Ray r, Hit &h)
           if(t > epsilon && t < 1/epsilon && t < h.t)
           {
             Vertex hitPoint = Vertex((r.position.x + t*r.direction.x), (r.position.y + t*r.direction.y), (r.position.z + t*r.direction.z));
-
 
             Vector normal0 = mesh->vertex_normals.at(mesh->triangle[i][0]);
             Vector normal1 = mesh->vertex_normals.at(mesh->triangle[i][1]);

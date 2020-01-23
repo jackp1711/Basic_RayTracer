@@ -9,12 +9,13 @@
 #ifndef _OBJECT_H_
 #define _OBJECT_H_
 
+#pragma once
+
 #include "ray.h"
 #include "hit.h"
 #include "vertex.h"
 #include "polymesh.h"
 #include "vector.h"
-#include "localLighting.h"
 
 #include <string>
 class Scene;

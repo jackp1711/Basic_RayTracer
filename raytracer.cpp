@@ -50,9 +50,13 @@ int main(int argc, char *argv[])
 
     Light pointLight = Light (Vertex(1,1,1), Vector(1, 0, 1), lightPoint, 0.75f);
     
-    lightModel.addLight(pointLight);
+    scene.addLight(pointLight);
 
-    Object teapot = Object("teapot.ply", Vertex(1.0f, 0.0f, 0.0f), Vertex(-0.25f, 0.0f, 40.0f));
+    Object teapot = Object("teapot.ply", Vertex(1.0f, 0.0f, 0.0f), Vertex(-0.25f, 2.0f, 20.0f));
+    teapot.ambientCoeff = 0.1f;
+    teapot.diffuseCoeff = 0.7f;
+    teapot.specularCoeff = 0.01f;
+
     scene.addObject(teapot);
 
     for (int i = 0; i < imageHeight; i++)
@@ -71,16 +75,12 @@ int main(int argc, char *argv[])
             hit.flag = false;
             hit.t = 100000;
 
-            scene.raytrace(ray, hit);
+            Vertex colour = scene.raytrace(ray, lightModel, camera);
 
-            if (hit.flag == true)
-            {
-                Vertex colour = lightModel.generateColour(hit, camera.position, scene);
-                fb->plotPixel(j, i, colour.x, colour.y, colour.z);
-                fb->plotDepth(j, i, hit.t);
-            }
+            fb->plotPixel(j, i, colour.x, colour.y, colour.z);
+            // fb->plotDepth(j, i, hit.t);
         }
     }
     fb->writeRGBFile((char *)"teapotFinal.ppm");
-    fb->writeDepthFile((char*)"teapotFinalDepth.ppm");
+    // fb->writeDepthFile((char*)"teapotFinalDepth.ppm");
 }

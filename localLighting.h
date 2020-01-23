@@ -20,23 +20,7 @@ class LocalLighting
     float ambientIntensity = 1;
     vector <Light> lights;
 
-    LocalLighting() = default;
+    LocalLighting(){};
     
-    void addLight(const Light l)
-    {
-        lights.push_back(l);
-    }
-
-    Light &getLight(int index)
-    {
-        return lights.at(index);
-    }
-
-    int getNumOfLights()
-    {
-        return lights.size();
-    }
-    
-    Vertex generateColour(Hit &hit, Vertex &viewer, Scene &scene);
-    bool shadowTest(Object &obj, Hit &h, Light light, Scene &scene);
+    Vertex generateColour(Hit &hit, Vertex &viewer, Light &light, Object *obj);
 };

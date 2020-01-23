@@ -6,9 +6,9 @@
 #include "vector.h"
 #include "vertex.h" 
 #include "light.h"
-#include "localLighting.h"
 #include "camera.h"
 #include "scene.h"
+#include "localLighting.h"
 
 #include <iostream>
 #include <fstream>
@@ -16,18 +16,18 @@
 #include <sstream>
 #include <cmath>
 
-bool shadowTest(Object &obj, Hit &h, Light light, Scene &scene);
+using namespace std;
 
-Vertex LocalLighting::generateColour(Hit &hit, Vertex &viewer, Scene &scene)
+Vertex LocalLighting::generateColour(Hit &hit, Vertex &viewer, Light &light, Object *obj)
 {
-    Object *obj = hit.what;
+    // Object *obj = hit.what;
     Vertex colour;
-    Light light = getLight(0);
     float intensity;
+    float scaling = 100;
 
-    float ambient = obj->ambientCoeff * ambientIntensity;
-    float diffuse = 0;
-    float specular = 0;
+    float ambient = 0.2f;
+    float diffuse = 0.7f;
+    float specular = 0.1f;
 
     float inLine = hit.normal.dot(light.direction);
 
@@ -37,7 +37,7 @@ Vertex LocalLighting::generateColour(Hit &hit, Vertex &viewer, Scene &scene)
     }
     else
     {
-        diffuse = inLine * obj->diffuseCoeff * light.intensity;
+        diffuse *= inLine * light.intensity; cout<< diffuse << endl;
     }
 
     Vector incident = light.direction;
@@ -57,7 +57,7 @@ Vertex LocalLighting::generateColour(Hit &hit, Vertex &viewer, Scene &scene)
     }
     else
     {
-        specular = light.intensity * obj->specularCoeff * pow(reflection.dot(viewingDirection), 100);
+        specular *= light.intensity * pow(reflection.dot(viewingDirection), 100);
     }
 
     intensity = ambient + diffuse + specular;
@@ -66,29 +66,8 @@ Vertex LocalLighting::generateColour(Hit &hit, Vertex &viewer, Scene &scene)
     {
         intensity = 1;
     }
-
+    
     colour = Vertex(obj->colour.x * intensity, obj->colour.y * intensity, obj->colour.z * intensity);
 
     return colour;
-}
-
-bool LocalLighting::shadowTest(Object &obj, Hit &h, Light light, Scene &scene)
-{
-    h.position.x = h.position.x + 0.0001*h.normal.x;
-    h.position.y = h.position.y + 0.0001*h.normal.y;
-    h.position.z = h.position.z + 0.0001*h.normal.z;
-    
-    Vector toLightVect;
-    toLightVect.createVector(h.position, light.position);
-    toLightVect.normalise();
-
-    Ray ray = Ray(h.position, toLightVect);
-    Hit shadowHit;
-
-    for(int i = 0; i < scene.getNumOfObjects(); i++)
-    {
-      Object &testObj = scene.getObject(i);
-      testObj.intersection(ray, shadowHit);
-    }
-    return shadowHit.flag;
 }
